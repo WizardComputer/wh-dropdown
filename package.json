@@ -1,0 +1,42 @@
+{
+  "dependencies": {
+    "lit": "^2.0.0-rc.2"
+  },
+  "name": "wh-dropdown",
+  "description": "Simple dropdown custom component",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "jasmine": "^3.7.0",
+    "karma": "^6.3.2",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-firefox-launcher": "^2.1.0",
+    "karma-jasmine": "^4.0.1",
+    "karma-spec-reporter": "0.0.32",
+    "rollup": "^2.48.0",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-terser": "^7.0.2"
+  },
+  "scripts": {
+    "prebuild": "npm run clean",
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WizardComputer/wh-dropdown.git"
+  },
+  "keywords": [
+    "dropdown",
+    "vanilla",
+    "lit"
+  ],
+  "author": "BakiVernes",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/WizardComputer/wh-dropdown/issues"
+  },
+  "homepage": "https://github.com/WizardComputer/wh-dropdown#readme"
+}
