@@ -1,34 +1,32 @@
-import resolve from '@rollup/plugin-node-resolve'
-import { terser } from 'rollup-plugin-terser'
-import copy from 'rollup-plugin-copy'
+import summary from 'rollup-plugin-summary';
+import {terser} from 'rollup-plugin-terser';
+import resolve from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace';
 
-// Static assets will vary depending on the application
-const copyConfig = {
-  targets: [
-    { src: 'node_modules/@webcomponents', dest: 'build-modern/node_modules' },
-    { src: 'images', dest: 'build-modern' },
-    { src: 'data', dest: 'build-modern' },
-    { src: 'index.html', dest: 'build-modern' },
-  ],
-}
-
-// The main JavaScript bundle for modern browsers that support
-// JavaScript modules and other ES2015+ features.
-const config = {
-  input: './src/index.js',
+export default {
+  input: 'wh-dropdown.js',
   output: {
-    file: 'dist/index.js',
+    file: 'wh-dropdown.bundled.js',
     format: 'esm',
   },
+  onwarn(warning) {
+    if (warning.code !== 'THIS_IS_UNDEFINED') {
+      console.error(`(!) ${warning.message}`);
+    }
+  },
   plugins: [
-    copy(copyConfig),
+    replace({'Reflect.decorate': 'undefined'}),
     resolve(),
+    terser({
+      ecma: 2017,
+      module: true,
+      warnings: true,
+      mangle: {
+        properties: {
+          regex: /^__/,
+        },
+      },
+    }),
+    summary(),
   ],
-  preserveEntrySignatures: false,
-}
-
-if (process.env.NODE_ENV !== 'development') {
-  config.plugins.push(terser())
-}
-
-export default config
+};
