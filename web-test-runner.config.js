@@ -1,4 +1,3 @@
-import {legacyPlugin} from '@web/dev-server-legacy';
 import {playwrightLauncher} from '@web/test-runner-playwright';
 
 // Uncomment for testing on Sauce Labs
@@ -89,25 +88,5 @@ export default {
     config: {
       ui: 'tdd',
     },
-  },
-  plugins: [
-    // Detect browsers without modules (e.g. IE11) and transform to SystemJS
-    // (https://modern-web.dev/docs/dev-server/plugins/legacy/).
-    legacyPlugin({
-      polyfills: {
-        webcomponents: true,
-        // Inject lit's polyfill-support module into test files, which is required
-        // for interfacing with the webcomponents polyfills
-        custom: [
-          {
-            name: 'lit-polyfill-support',
-            path: 'node_modules/lit/polyfill-support.js',
-            test:
-              "!('attachShadow' in Element.prototype) || !('getRootNode' in Element.prototype) || window.ShadyDOM && window.ShadyDOM.force",
-            module: false,
-          },
-        ],
-      },
-    }),
-  ],
+  }
 };

@@ -1,13 +1,57 @@
-import {LitElement, html, css} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import styles from "./styles/panel"
+import { LitElement, html, css } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
 import { MenuItem } from "./item"
 
 @customElement('wh-dropdown')
 export class Dropdown extends LitElement {
-  static get is() { return "wh-dropdown" }
-
-  static get styles() { return styles }
+  static styles = css`
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: var(--padding, 0);
+    min-width: var(--min-width, 0);
+    width: 14rem;
+    z-index: 50;
+    position: absolute;
+    overflow-y: scroll;
+    background-color: var(--background-color, white);
+    max-width: var(--max-width, auto);
+    border-radius: var(--border-radius, 0.25rem);
+    box-shadow: var(--box-shadow, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px);
+    height: 0;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #e8e8e8;
+    opacity: 0;
+    transition: opacity 150ms ease-out;
+  }
+  
+  .open {
+    opacity: 1;
+    height: auto;
+    transition: opacity 150ms ease-out;
+  }
+  
+  ::slotted(*[slot="button"]) {
+    padding: .5rem 1rem .5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    justify-content: center;
+    display: inline-flex;
+    border-width: 1px;
+    background-color: white;
+    border-style: solid;
+    color: #374151;
+    user-select: none;
+    border-color: #D1D5DB;
+    border-radius: 0.375rem;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+  }
+  
+  ::slotted(*:hover[slot="button"]) {
+    background-color: #F9FAFB;
+  }
+`
 
   @property()
   opened: boolean = false
@@ -18,100 +62,102 @@ export class Dropdown extends LitElement {
   @property()
   skidding: number = 0
 
+  @property({ attribute: false })
+  list: Array<MenuItem>
+
   connectedCallback() {
     super.connectedCallback()
 
-    this.setAttribute("tabindex", 0)
-    this.addEventListener("keydown", this._handleKeyPress)
-    this._handleClick = this._handleClick.bind(this)
+    this.setAttribute("tabindex", "0")
+    this.addEventListener("keydown", this.handleKeyPress)
   }
 
   disconnectedCallback() {
-    this.removeEventListener("keydown", this._handleKeyPress)
+    this.removeEventListener("keydown", this.handleKeyPress)
     super.disconnectedCallback()
   }
 
-  render() {
+  protected render() {
     return html`
-      <slot name="button" @click="${this._toggle}"></slot>
+      <slot name="button" @click="${this.toggle}"></slot>
       <ul class="${this.opened ? 'open' : ''}" style="margin-top: ${this.distance}px; margin-left: ${this.skidding}px;">
           <slot></slot>
       </ul>
     `
   }
 
-  firstUpdated(changedProperties) {
-    this._$list = this.shadowRoot.querySelector("ul > slot").assignedElements({flatten: true})
+  firstUpdated() {
+    this.list = Array.from(document.getElementsByTagName("wh-menu-item")) as MenuItem[]
     if (this.opened) this.focus()
   }
 
-  _handleClick({ target }) {
-    if (this.opened && !this.contains(target)) return this.close()
-    this.dispatchEvent(new CustomEvent("wh-select", { detail: { item: target } }))
+  private handleClick = (e: Event) => {
+    if (this.opened && !this.contains(e.target as Node)) return this.close()
+    this.dispatchEvent(new CustomEvent("wh-select", { detail: { item: e.target } }))
   }
 
-  _toggle() {
+  private toggle = () => {
     if (this.opened) return this.close()
     this.open()
   }
 
-  _open() {
+  open = () => {
     this.opened = true
     //Don't close dropdown when opening
-    setTimeout(() => document.addEventListener("click", this._handleClick))
+    setTimeout(() => document.addEventListener("click", this.handleClick))
   }
 
-  _close() {
+  close = () => {
     this.opened = false
     this.focus()
-    document.removeEventListener("click", this._handleClick)
+    document.removeEventListener("click", this.handleClick)
   }
 
-  _handleKeyPress(e) {
-    switch (e.keyCode) {
-      case 9:  this._handleFocus(e); break
-      case 13: this._handleEnter(e); break
-      case 27: this.close(); break
-      case 40: case 38: this._handleArrowKeys(e); break
+  private handleKeyPress(e: KeyboardEvent) {
+    switch (e.code) {
+      case "Tab":  this.handleFocus(e); break
+      case "Enter": this.handleEnter(e.target); break
+      case "Escape": this.close(); break
+      case "ArrowDown": case "ArrowUp": this.handleArrowKeys(e); break
     }
   }
 
-  _handleEnter({ target }) {
-    if (target === this) return this._toggle()
+  private handleEnter(target: EventTarget | null) {
+    if (target === this) return this.toggle()
     this.dispatchEvent(new CustomEvent("wh-select", { detail: { item: target } }))
   }
 
-  _navigate(e) {
+  private navigate(e: KeyboardEvent) {
     //Prevent page scroll
     e.preventDefault()
 
-    if (document.activeElement === this) return this._$list[0].focus()
-    this._move(e.keyCode)
+    if (document.activeElement === this) return this.list[0].focus()
+    this.move(e.code)
   }
 
-  _move(direction) {
-    if (direction === 40) return this._moveDown()
-    this._moveUp()
+  private move(direction: String) {
+    if (direction === "ArrowDown") return this.moveDown()
+    this.moveUp()
   }
 
-  _moveUp() {
-    const nextElement = document.activeElement.previousElementSibling
+  private moveUp() {
+    const nextElement = document.activeElement.previousElementSibling as MenuItem
 
-    if (nextElement && this._$list.includes(nextElement)) return nextElement.focus()
-    this._$list[this._$list.length - 1].focus()
+    if (nextElement && this.list.includes(nextElement)) return nextElement.focus()
+    this.list[this.list.length - 1].focus()
   }
 
-  _moveDown() {
-    const nextElement = document.activeElement.nextElementSibling
+  private moveDown() {
+    const nextElement = document.activeElement.nextElementSibling as MenuItem
 
-    if (nextElement && this._$list.includes(nextElement)) return nextElement.focus()
-    this._$list[0].focus()
+    if (nextElement && this.list.includes(nextElement)) return nextElement.focus()
+    this.list[0].focus()
   }
 
-  _handleFocus(e) {
+  private handleFocus(e) {
     if (this.opened) {
       e.preventDefault()
-      if (document.activeElement === this) return this._$list[0].focus()
+      if (document.activeElement === this) return this.list[0].focus()
       if (document.activeElement?.tagName.toLowerCase() === "wh-menu-item") {
         this.close()
         this.focus()
@@ -119,8 +165,8 @@ export class Dropdown extends LitElement {
     }
   }
 
-  _handleArrowKeys(e) {
+  private handleArrowKeys(e) {
     e.preventDefault()
-    this.opened ? this._navigate(e) : this.open()
+    this.opened ? this.navigate(e) : this.open()
   }
 }
