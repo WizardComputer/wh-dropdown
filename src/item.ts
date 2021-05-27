@@ -1,4 +1,4 @@
-import {css, html, LitElement} from "lit"
+import { css, html, LitElement } from "lit"
 import { customElement, property, query } from "lit/decorators";
 
 @customElement('wh-menu-item')

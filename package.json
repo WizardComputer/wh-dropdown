@@ -1,12 +1,13 @@
 {
-  "name": "wh-dropdown",
-  "private": true,
-  "version": "1.0.0",
+  "name": "@wizardhealth/wh-dropdown",
+  "version": "1.0.1",
   "description": "Simple dropdown custom component",
-  "main": "dropdown.js",
-  "module": "dropdown.js",
+  "main": "dist/dropdown.js",
+  "module": "dist/dropdown.js",
+  "files": [
+    "dist/"
+  ],
   "type": "module",
-  "types": "dropdown.d.ts",
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
