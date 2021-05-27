@@ -4,9 +4,9 @@ import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 
 export default {
-  input: 'wh-dropdown.js',
+  input: ['dropdown.js', 'item.js'],
   output: {
-    file: 'wh-dropdown.bundled.js',
+    dir: 'dist/',
     format: 'esm',
   },
   onwarn(warning) {
