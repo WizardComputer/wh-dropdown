@@ -2,14 +2,17 @@
   "name": "@wizardhealth/wh-dropdown",
   "version": "1.0.1",
   "description": "Simple dropdown custom component",
-  "main": "dist/dropdown.js",
   "module": "dist/dropdown.js",
+  "main": "dist/dropdown.js",
+  "types": "dist/types/index.d.ts",
   "files": [
-    "dist/"
+    "dist/*.js",
+    "dist/*.js.map",
+    "dist/types/**/*"
   ],
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --noEmit false --declaration true --emitDeclarationOnly true --outDir dist/types && rollup -c",
     "build:watch": "tsc --watch",
     "clean": "rimraf dropdown.{d.ts,d.ts.map,js,js.map} test/dropdown.{d.ts,d.ts.map,js,js.map} test/dropdown_test.{d.ts,d.ts.map,js,js.map} item.{d.ts,d.ts.map,js,js.map} test/item.{d.ts,d.ts.map,js,js.map} test/item_test.{d.ts,d.ts.map,js,js.map}",
     "lint": "npm run lint:lit-analyzer && npm run lint:eslint",

@@ -1,6 +1,7 @@
 import { expect } from '@esm-bundle/chai';
 import { fixture, html } from '@open-wc/testing';
-import { Dropdown } from "../dropdown.js";
+import { Dropdown } from "../dist/dropdown.js";
+
 suite("wh-dropdown", () => {
     test("is defined", () => {
         const el = document.createElement('wh-dropdown');
