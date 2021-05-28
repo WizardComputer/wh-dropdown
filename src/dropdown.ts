@@ -25,13 +25,13 @@ export class Dropdown extends LitElement {
     opacity: 0;
     transition: opacity 150ms ease-out;
   }
-  
+
   .open {
     opacity: 1;
     height: auto;
     transition: opacity 150ms ease-out;
   }
-  
+
   ::slotted(*[slot="button"]) {
     padding: .5rem 1rem .5rem 1rem;
     font-size: 0.875rem;
@@ -47,7 +47,7 @@ export class Dropdown extends LitElement {
     border-radius: 0.375rem;
     box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
   }
-  
+
   ::slotted(*:hover[slot="button"]) {
     background-color: #F9FAFB;
   }
@@ -77,28 +77,9 @@ export class Dropdown extends LitElement {
     super.disconnectedCallback()
   }
 
-  protected render() {
-    return html`
-      <slot name="button" @click="${this.toggle}"></slot>
-      <ul class="${this.opened ? 'open' : ''}" style="margin-top: ${this.distance}px; margin-left: ${this.skidding}px;">
-          <slot></slot>
-      </ul>
-    `
-  }
-
   firstUpdated() {
     this.list = Array.from(document.getElementsByTagName("wh-menu-item")) as MenuItem[]
     if (this.opened) this.focus()
-  }
-
-  private handleClick = (e: Event) => {
-    if (this.opened && !this.contains(e.target as Node)) return this.close()
-    this.dispatchEvent(new CustomEvent("wh-select", { detail: { item: e.target } }))
-  }
-
-  private toggle = () => {
-    if (this.opened) return this.close()
-    this.open()
   }
 
   open = () => {
@@ -111,6 +92,25 @@ export class Dropdown extends LitElement {
     this.opened = false
     this.focus()
     document.removeEventListener("click", this.handleClick)
+  }
+
+  protected render() {
+    return html`
+      <slot name="button" @click="${this.toggle}"></slot>
+      <ul class="${this.opened ? 'open' : ''}" style="margin-top: ${this.distance}px; margin-left: ${this.skidding}px;">
+          <slot></slot>
+      </ul>
+    `
+  }
+
+  private handleClick = (e: Event) => {
+    if (this.opened && !this.contains(e.target as Node)) return this.close()
+    this.dispatchEvent(new CustomEvent("wh-select", { detail: { item: e.target } }))
+  }
+
+  private toggle = () => {
+    if (this.opened) return this.close()
+    this.open()
   }
 
   private handleKeyPress(e: KeyboardEvent) {
