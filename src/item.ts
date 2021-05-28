@@ -21,11 +21,11 @@ export class MenuItem extends LitElement {
     color: var(--text-color, #373d3f);
     font-size: var(--font-size, 1rem);
   }
-  
+
   li:hover {
     background-color: var(--hover-background-color, #f4fbff);
   }
-  
+
   li:focus, .focused {
     outline: none;
     background-color: var(--focus-background-color, #f4fbff);
