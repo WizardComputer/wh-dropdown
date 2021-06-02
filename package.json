@@ -4,12 +4,16 @@
   "description": "Simple dropdown custom component",
   "main": "dist/dropdown.js",
   "module": "dist/dropdown.js",
+  "types": "dist/types/index.d.ts",
   "files": [
-    "dist/"
+    "dist/",
+    "dist/*.js",
+    "dist/*.js.map",
+    "dist/types/**/*"
   ],
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --outDir dist/ && rollup -c",
     "build:watch": "tsc --watch",
     "clean": "rimraf dropdown.{d.ts,d.ts.map,js,js.map} test/dropdown.{d.ts,d.ts.map,js,js.map} test/dropdown_test.{d.ts,d.ts.map,js,js.map} item.{d.ts,d.ts.map,js,js.map} test/item.{d.ts,d.ts.map,js,js.map} test/item_test.{d.ts,d.ts.map,js,js.map}",
     "lint": "npm run lint:lit-analyzer && npm run lint:eslint",
@@ -26,6 +30,7 @@
     "analyze": "wca analyze \"src/**/*.ts\" --outFile custom-elements.json",
     "serve": "wds --watch",
     "start": "web-dev-server",
+    "pretest": "npm run build",
     "test": "wtr",
     "test:watch": "npm run test -- --watch",
     "checksize": "rollup -c ; cat dropdown.bundled.js | gzip -9 | wc -c ; rm dropdown.bundled.js"
